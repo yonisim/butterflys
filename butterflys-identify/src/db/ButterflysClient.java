@@ -10,6 +10,7 @@ import objects.Butterfly;
 public class ButterflysClient extends MysqlClient {
 
 	private String TABLE_NAME = "butterflys_general";
+	private String colId = "id";
 	private String colName = "butterfly_name";
 	private String colLinkToPicture = "link_to_picture";
 	private String colDescription = "description";
@@ -38,5 +39,46 @@ public class ButterflysClient extends MysqlClient {
 		return butterflys;
 		
 	}
+
+	public String getTABLE_NAME() {
+		return TABLE_NAME;
+	}
+
+	public void setTABLE_NAME(String tABLE_NAME) {
+		TABLE_NAME = tABLE_NAME;
+	}
+	
+	public String getColId() {
+		return colId;
+	}
+
+	public void setColId(String colId) {
+		this.colId = colId;
+	}
+
+	public String getColName() {
+		return colName;
+	}
+
+	public void setColName(String colName) {
+		this.colName = colName;
+	}
+
+	public String getColLinkToPicture() {
+		return colLinkToPicture;
+	}
+
+	public void setColLinkToPicture(String colLinkToPicture) {
+		this.colLinkToPicture = colLinkToPicture;
+	}
+
+	public String getColDescription() {
+		return colDescription;
+	}
+
+	public void setColDescription(String colDescription) {
+		this.colDescription = colDescription;
+	}
+	
 	
 }

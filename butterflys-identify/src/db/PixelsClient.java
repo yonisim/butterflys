@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Vector;
 
 import objects.Pixel;
 
@@ -47,5 +48,80 @@ public class PixelsClient extends MysqlClient {
 		return pixels;
 		
 	}
+	
+    public Vector<Integer> getVectorFromDb(int vectorId) throws ClassNotFoundException, SQLException, IOException{
+    	Vector<Integer> vector = new Vector<>();
+    	List<Pixel> pixels = selectPixels(colVectorId + " = " + vectorId);
+    	for(Pixel pixel : pixels){
+    		vector.add(pixel.red);
+    		vector.add(pixel.green);
+    		vector.add(pixel.blue);
+    	}
+    	return vector;
+    }
+    
+    public void insertVector(Vector<Integer> vector){
+    	for(int i = 0 ; i < vector.size() ; i += 3){
+    		//to be implemented
+    	}
+    }
+    
+
+	public String getTABLE_NAME() {
+		return TABLE_NAME;
+	}
+
+	public void setTABLE_NAME(String tABLE_NAME) {
+		TABLE_NAME = tABLE_NAME;
+	}
+
+	public String getColVectorId() {
+		return colVectorId;
+	}
+
+	public void setColVectorId(String colVectorId) {
+		this.colVectorId = colVectorId;
+	}
+
+	public String getColRow() {
+		return colRow;
+	}
+
+	public void setColRow(String colRow) {
+		this.colRow = colRow;
+	}
+
+	public String getColCol() {
+		return colCol;
+	}
+
+	public void setColCol(String colCol) {
+		this.colCol = colCol;
+	}
+
+	public String getColRed() {
+		return colRed;
+	}
+
+	public void setColRed(String colRed) {
+		this.colRed = colRed;
+	}
+
+	public String getColGreen() {
+		return colGreen;
+	}
+
+	public void setColGreen(String colGreen) {
+		this.colGreen = colGreen;
+	}
+
+	public String getColBlue() {
+		return colBlue;
+	}
+
+	public void setColBlue(String colBlue) {
+		this.colBlue = colBlue;
+	}
+	
 	
 }
