@@ -95,8 +95,6 @@ public class K_nearest {
 	protected float VectorAvgRGB(Vector<Integer> vector){
 		return vectorSumRGB(vector) / vector.size();
 	}
-
-	
 	
 	protected float vectorSum(Vector<Float> HSV)
 	{ // for now it's only the sum of h
