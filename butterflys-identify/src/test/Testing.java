@@ -14,7 +14,7 @@ public class Testing {
 	
 	public static void main(String[] args) throws ClassNotFoundException, SQLException, IOException {
 		MysqlClient mySqlClient = new MysqlClient();
-		String query1 = "SELECT * FROM butterflys.butterflys_general";
+		String query1 = "SELECT * FROM performance_schema.accounts";
 
 
 		mySqlClient.executeQuery(query1);
