@@ -38,7 +38,7 @@ public class MysqlClient {
     }
     
     private void initParams() throws IOException {
-    	connectionUrl = "localhost:3306";
+    	connectionUrl = "butterflysdb.no-ip.org:3306";
     	dbUserName = "root";
     	dbPassword = "root";
     	dbDriverName = "com.mysql.jdbc.Driver";

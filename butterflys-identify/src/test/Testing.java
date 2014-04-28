@@ -13,6 +13,15 @@ public class Testing {
 
 	
 	public static void main(String[] args) throws ClassNotFoundException, SQLException, IOException {
+
+		MysqlClient mySqlClient = new MysqlClient();
+		String query1 = "SELECT * FROM performance_schema.accounts";
+
+
+		mySqlClient.executeQuery(query1);
+		mySqlClient.printFirstColFromResultSet();
+		
+		Butterfly butterfly = new Butterfly("pink4", "pink4" , "this butterfly is very very pink");
 		ButterflysClient client = new ButterflysClient();
 		
 		List<Butterfly> list = client.selectButterfly("");
@@ -21,7 +30,7 @@ public class Testing {
 			System.out.println(b.toString());
 		}
 		
-		Butterfly butterfly = new Butterfly("pink7", "pink7" , "this butterfly is very very pink");
+		butterfly = new Butterfly("pink7", "pink7" , "this butterfly is very very pink");
 		while(client.insertButterfly(butterfly)){
 			butterfly.name += 1;
 			butterfly.linkToPicture += 1;
