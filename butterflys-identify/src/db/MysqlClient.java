@@ -104,10 +104,8 @@ public class MysqlClient {
             System.out.println("Executing query: " + insert);
             return statement.execute(insert);
         } catch (SQLException e){
-        	e.printStackTrace();
-            throw e;
-        } finally{
-        	//connection.close();
+        	System.out.println(e.getMessage());
+            return false;
         }
     }
     
