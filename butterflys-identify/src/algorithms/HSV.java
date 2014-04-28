@@ -10,7 +10,7 @@ import java.io.File;
 import java.util.Vector;
 import javax.imageio.ImageIO;
 
-public class HSV { 
+public class HSV {
 
     protected Vector<Float> getHSV(Vector<Integer> RGB) {
         try {
