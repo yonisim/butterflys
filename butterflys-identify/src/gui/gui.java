@@ -17,11 +17,6 @@ import java.sql.SQLException;
 import javax.swing.JOptionPane;
 import objects.Butterfly;
 
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
 /**
  *
  * @author Shlomit Rozen(Gilboa) Haim Gilboa, Mayyan Simkins
@@ -261,16 +256,16 @@ public class gui extends javax.swing.JFrame {
     }//GEN-LAST:event_btnBrowseActionPerformed
 
     private void btnSearchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSearchActionPerformed
-        /*try{
+        try{
             Butterfly ans = _manager.Detector(_ImgPath);
             SearchResView showAns = new SearchResView();
             showAns.setButterflyAns(ans);
         }catch (ClassNotFoundException | SQLException | IOException e){
             e.printStackTrace();
             // need to do: inform the user something went wrong
-        }*/
-        SearchResView showAns = new SearchResView();
-        showAns.setButterflyAns(new Butterfly(_Name,"C:\\Users\\שלומית\\Documents\\butterfly_images\\1138682009428191446.jpg", _Description));
+        }
+        //SearchResView showAns = new SearchResView();
+        //showAns.setButterflyAns(new Butterfly(_Name,"C:\\Users\\שלומית\\Documents\\butterfly_images\\1138682009428191446.jpg", _Description));
     }//GEN-LAST:event_btnSearchActionPerformed
 
     private void btnAddToDBActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddToDBActionPerformed
@@ -306,15 +301,11 @@ public class gui extends javax.swing.JFrame {
     private void btnAddDetailsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddDetailsActionPerformed
         _Name = jTextFieldButterflyName.getText();
         _Description = taDescription.getText();
-        JOptionPane.showMessageDialog(null, "Butterfly added to Data Base", "Add butterfly", JOptionPane.INFORMATION_MESSAGE);
-        resetGui();
-        btnBrowse.setEnabled(true);
-        btnSearch.setEnabled(true);
-        btnAddToDB.setEnabled(true);
-        /*try{
+        try{
             if (!_Description.isEmpty() && !_Name.isEmpty())
             {
                 _manager.AddToDB(_ImgPath, _Name,_Description);
+                JOptionPane.showMessageDialog(null, "Butterfly added to Data Base", "Add butterfly", JOptionPane.INFORMATION_MESSAGE);
                 resetGui();
                 btnBrowse.setEnabled(true);
                 btnSearch.setEnabled(true);
@@ -331,7 +322,7 @@ public class gui extends javax.swing.JFrame {
             btnBrowse.setEnabled(true);
             btnSearch.setEnabled(true);
             btnAddToDB.setEnabled(true);
-        }*/       
+        }       
     }//GEN-LAST:event_btnAddDetailsActionPerformed
 
     /**
