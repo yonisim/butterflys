@@ -40,7 +40,7 @@ public class MysqlClient {
 	private void initParams() throws IOException {
 		connectionUrl = "localhost:3306";
 		dbUserName = "root";
-		dbPassword = "root";
+		dbPassword = "";
 		dbDriverName = "com.mysql.jdbc.Driver";
 		SCHEMA = "butterflys";
 	}

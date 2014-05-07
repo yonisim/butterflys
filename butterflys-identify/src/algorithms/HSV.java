@@ -17,7 +17,7 @@ public class HSV {
     	try {
             float[] hsv = new float[3];
             int[] rgb;
-            for (int i = 10; i < RGB.size() - 3; i = i + 3)
+            for (int i = 0; i < RGB.size(); i = i + 3)
             {
                 Color.RGBtoHSB(RGB.elementAt(i),RGB.elementAt(i+1),RGB.elementAt(i+2),hsv);
                 for (int k = 0; k < hsv.length; k++) {
