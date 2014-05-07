@@ -37,15 +37,17 @@ public class K_nearest {
 				result = results.get(0);
 			}
 		}
+		if(result.id == 0)
+			System.out.println("No match was found");
 		return result;
 	}
 
 	protected Butterfly KNearestNeighborsSum(Vector<Integer> original) throws ClassNotFoundException, SQLException, IOException
 	{
 		Butterfly result = new Butterfly();
-		long min = Long.MAX_VALUE;
-		long originalSum = vectorSumRGB(original);
-		long res;
+		float min = Float.MAX_VALUE;
+		float originalSum = vectorSumRGB(original);
+		float res;
 		VectorsClient vectorsClient = new VectorsClient();
 		for (BVector vector : vectorsClient.selectVectors("")){
 			res = Math.abs(vector.vector_sum - originalSum);
@@ -101,9 +103,9 @@ public class K_nearest {
 	protected float vectorSum(Vector<Float> HSV)
 	{ // for now it's only the sum of h
 		float Hsum = 0;
-		for (int i = 0 ; i< HSV.size(); i = i + 3)
+		for (int i = 0 ; i< HSV.size() - 3; i = i + 3)
 		{
-			Hsum = Hsum + HSV.elementAt((i));
+			Hsum += HSV.elementAt((i));
 		}
 		return Hsum;
 	}

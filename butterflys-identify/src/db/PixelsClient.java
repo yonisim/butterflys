@@ -13,21 +13,19 @@ public class PixelsClient extends MysqlClient {
 
 	private String TABLE_NAME = "pixels";
 	private String colVectorId = "vector_id";
-	private String colRow = "row";
-	private String colCol = "col";
-	private String colRed = "red";
-	private String colGreen = "green";
-	private String colBlue = "blue";
+	private String colPixelNum = "pixel_num";
+	private String colH = "H";
+	private String colS = "S";
+	private String colV = "V";
 	
 	
-	public boolean insertPixel(Pixel pixel) 
+	public int insertPixel(Pixel pixel) 
 			throws ClassNotFoundException, SQLException, IOException{
 		String setClause = colVectorId + " = '" + pixel.vector_id + "' , " +
-							colRow + " = '" + pixel.row + "' , " +
-							colCol + " = '" + pixel.col + "' , " + 
-							colRed + " = '" + pixel.red + "' , " + 
-							colGreen + " = '" + pixel.green + "' , " + 
-							colBlue + " = '" + pixel.blue + "'";
+							colPixelNum + " = '" + pixel.pixelNum + "' , " +
+							colH + " = '" + pixel.H + "' , " + 
+							colS + " = '" + pixel.S + "' , " + 
+							colV + " = '" + pixel.V + "'";
 		return insert(TABLE_NAME , setClause);
 	}
 	
@@ -38,11 +36,10 @@ public class PixelsClient extends MysqlClient {
 		while(resultSet.next()){
 			Pixel pixel = new Pixel();
 			pixel.vector_id = resultSet.getInt(1);
-			pixel.row = resultSet.getInt(2);
-			pixel.col = resultSet.getInt(3);
-			pixel.red = resultSet.getInt(4);
-			pixel.green = resultSet.getInt(5);
-			pixel.blue = resultSet.getInt(6);
+			pixel.pixelNum = resultSet.getInt(2);
+			pixel.H = resultSet.getInt(4);
+			pixel.S = resultSet.getInt(5);
+			pixel.V = resultSet.getInt(6);
 			pixels.add(pixel);
 		}
 		return pixels;
@@ -53,16 +50,21 @@ public class PixelsClient extends MysqlClient {
     	Vector<Integer> vector = new Vector<>();
     	List<Pixel> pixels = selectPixels(colVectorId + " = " + vectorId);
     	for(Pixel pixel : pixels){
-    		vector.add(pixel.red);
-    		vector.add(pixel.green);
-    		vector.add(pixel.blue);
+    		vector.add(pixel.H);
+    		vector.add(pixel.S);
+    		vector.add(pixel.V);
     	}
     	return vector;
     }
     
-    public void insertVector(Vector<Integer> vector){
-    	for(int i = 0 ; i < vector.size() ; i += 3){
-    		//to be implemented
+    public void insertVectorToPixelsTable(Vector<Integer> vector , int vector_id) throws ClassNotFoundException, SQLException, IOException{
+    	for(int i = 0 ; i < vector.size() -3; i += 3){
+    		String setClause = colVectorId + " = '" + vector_id + "' , " +
+					colPixelNum + " = " + i/3 + " , " +
+					colH + " = " + vector.get(i) + " , " + 
+					colS + " = " + vector.get(i+1) + " , " +
+					colV + " = " + vector.get(i+2);
+    		insert(TABLE_NAME , setClause);
     	}
     }
     
@@ -83,45 +85,38 @@ public class PixelsClient extends MysqlClient {
 		this.colVectorId = colVectorId;
 	}
 
-	public String getColRow() {
-		return colRow;
+	public String getColPixelNum() {
+		return colPixelNum;
 	}
 
-	public void setColRow(String colRow) {
-		this.colRow = colRow;
+	public void setColPixelNum(String colPixelNum) {
+		this.colPixelNum = colPixelNum;
 	}
 
-	public String getColCol() {
-		return colCol;
+	public String getColH() {
+		return colH;
 	}
 
-	public void setColCol(String colCol) {
-		this.colCol = colCol;
+	public void setColH(String colH) {
+		this.colH = colH;
 	}
 
-	public String getColRed() {
-		return colRed;
+	public String getColS() {
+		return colS;
 	}
 
-	public void setColRed(String colRed) {
-		this.colRed = colRed;
+	public void setColS(String colS) {
+		this.colS = colS;
 	}
 
-	public String getColGreen() {
-		return colGreen;
+	public String getColV() {
+		return colV;
 	}
 
-	public void setColGreen(String colGreen) {
-		this.colGreen = colGreen;
+	public void setColV(String colV) {
+		this.colV = colV;
 	}
 
-	public String getColBlue() {
-		return colBlue;
-	}
-
-	public void setColBlue(String colBlue) {
-		this.colBlue = colBlue;
-	}
 	
 	
 }

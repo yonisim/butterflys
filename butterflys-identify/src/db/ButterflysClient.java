@@ -16,13 +16,24 @@ public class ButterflysClient extends MysqlClient {
 	private String colDescription = "description";
 	
 	
-	public boolean insertButterfly(Butterfly butterfly) 
+	public int insertButterfly(Butterfly butterfly) 
 			throws ClassNotFoundException, SQLException, IOException{
 		String setClause = colName + " = '" + butterfly.name + "' , " +
 							colLinkToPicture + " = '" + butterfly.linkToPicture + "' , " +
 							colDescription + " = '" + butterfly.description + "'";
 		return insert(TABLE_NAME , setClause);
 	}
+	
+	public Butterfly selectSingleButterfly(String whereClause) throws ClassNotFoundException, SQLException, IOException{
+		List<Butterfly> list = selectButterfly(whereClause);
+		if(list.size() == 1)
+			return list.get(0);
+		else{
+			System.out.println("ERROR: more than one butterfly in result set");
+			return null;
+		}
+	}
+	
 	
 	public List<Butterfly> selectButterfly(String whereClause) 
 			throws ClassNotFoundException, SQLException, IOException{

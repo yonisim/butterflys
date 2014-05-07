@@ -30,11 +30,13 @@ public class Testing {
 			System.out.println(b.toString());
 		}
 		
-		butterfly = new Butterfly("pink7", "pink7" , "this butterfly is very very pink");
-		while(client.insertButterfly(butterfly)){
+		butterfly = new Butterfly("pink20", "pink20" , "this butterfly is very very pink");
+		int i;
+		while((i = client.insertButterfly(butterfly)) == 0){
 			butterfly.name += 1;
 			butterfly.linkToPicture += 1;
 		}
+		System.out.println("index: " + i);
 		
 		list = client.selectButterfly("");
 		System.out.println(list.size());

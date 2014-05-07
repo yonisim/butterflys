@@ -12,16 +12,18 @@ public class VectorsClient extends MysqlClient {
 	private String TABLE_NAME = "vectors";
 	private String colVectorId = "vector_id";
 	private String colbutterflyId = "butterfly_id";
+	private String colLinkToPicture = "link_to_picture";
 	private String colVectorSum = "vector_sum";
 	private String colVectorAverage = "vector_average";
 	
 	
-	public boolean insertVector(BVector bvector) 
+	public int insertVector(BVector bvector) 
 			throws ClassNotFoundException, SQLException, IOException{
-		String setClause = colVectorId + " = '" + bvector.vector_id + "' , " +
-							colbutterflyId + " = '" + bvector.butterfly_id + "' , " +
-							colVectorSum + " = '" + bvector.vector_sum + "' , " + 
-							colVectorAverage + " = '" + bvector.vector_average + "'";
+		String setClause = colVectorId + " = " + bvector.vector_id + " , " +
+							colbutterflyId + " = " + bvector.butterfly_id + " , " +
+							colLinkToPicture + " = '" + bvector.linkToPicture + "' , " +
+							colVectorSum + " = " + bvector.vector_sum + " , " + 
+							colVectorAverage + " = " + bvector.vector_average;
 		return insert(TABLE_NAME , setClause);
 	}
 	
@@ -33,6 +35,7 @@ public class VectorsClient extends MysqlClient {
 			BVector bvector = new BVector();
 			bvector.vector_id = resultSet.getInt(1);
 			bvector.butterfly_id = resultSet.getInt(2);
+			bvector.linkToPicture = resultSet.getString(3);
 			bvector.vector_sum = resultSet.getInt(3);
 			bvector.vector_average = resultSet.getInt(4);
 			vectors.add(bvector);

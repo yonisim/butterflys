@@ -257,6 +257,7 @@ public class gui extends javax.swing.JFrame {
 
     private void btnSearchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSearchActionPerformed
         try{
+        	System.out.println(_ImgPath);
             Butterfly ans = _manager.Detector(_ImgPath);
             SearchResView showAns = new SearchResView();
             showAns.setButterflyAns(ans);
@@ -301,6 +302,7 @@ public class gui extends javax.swing.JFrame {
     private void btnAddDetailsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddDetailsActionPerformed
         _Name = jTextFieldButterflyName.getText();
         _Description = taDescription.getText();
+        _ImgPath = _ImgPath.replaceAll("\\([tbrfn])", "\\\\$1");
         try{
             if (!_Description.isEmpty() && !_Name.isEmpty())
             {

@@ -13,21 +13,22 @@ import javax.imageio.ImageIO;
 public class HSV {
 
     protected Vector<Float> getHSV(Vector<Integer> RGB) {
-        try {
-            Vector <Float> HSV = new Vector <Float>();
+    	Vector <Float> HSV = new Vector <Float>();
+    	try {
             float[] hsv = new float[3];
             int[] rgb;
-            for (int i = 10; i < RGB.size(); i = i + 3)
+            for (int i = 10; i < RGB.size() - 3; i = i + 3)
             {
                 Color.RGBtoHSB(RGB.elementAt(i),RGB.elementAt(i+1),RGB.elementAt(i+2),hsv);
                 for (int k = 0; k < hsv.length; k++) {
                         HSV.add(hsv[k]);
                     }
             }
-            return HSV;
+            
         } catch (Exception e) {
-            return null;
+            e.printStackTrace();
         }
+        return HSV;
     }
 
     protected Vector<Integer> getRGB(String imgPath)

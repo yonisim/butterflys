@@ -4,34 +4,31 @@ package objects;
 public class Pixel{
 	
 	public int vector_id;
-	public int row;
-	public int col;
-	public int red;
-	public int green;
-	public int blue;
+	public int pixelNum;
+	public int H;
+	public int S;
+	public int V;
 	
 	
 	public Pixel(){
 		
 	}
 	
-	public Pixel(int vector_id , int row , int col , int red , int green , int blue){
+	public Pixel(int vector_id , int row , int h , int s , int v){
 		this.vector_id = vector_id;
-		this.row = row;
-		this.col = col;
-		this.red = red;
-		this.green = green;
-		this.blue = blue;
+		this.pixelNum = row;
+		this.H = h;
+		this.S = s;
+		this.V = v;
 	}
 	
 	@Override
 	public String toString() {
 		String string = "vector id: " + vector_id;
-		string += " , row: " + row;
-		string += " , col: " + col;
-		string += " , red: " + red;
-		string += " , green: " + green;
-		string += " , blue: " + blue;
+		string += " , row: " + pixelNum;
+		string += " , H: " + H;
+		string += " , S: " + S;
+		string += " , V: " + V;
 		return string;
 	}
 
