@@ -302,7 +302,7 @@ public class gui extends javax.swing.JFrame {
     private void btnAddDetailsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddDetailsActionPerformed
         _Name = jTextFieldButterflyName.getText();
         _Description = taDescription.getText();
-        _ImgPath = _ImgPath.replaceAll("\\([tbrfn])", "\\\\$1");
+        _ImgPath = convertBackslashes(_ImgPath);
         try{
             if (!_Description.isEmpty() && !_Name.isEmpty())
             {
@@ -327,6 +327,17 @@ public class gui extends javax.swing.JFrame {
         }       
     }//GEN-LAST:event_btnAddDetailsActionPerformed
 
+	public static String convertBackslashes(String s){
+		String res = s.replace("\t", "/t");
+		res = res.replace("\r", "/r");
+		res = res.replace("\n", "/n");
+		res = res.replace("\b", "/b");
+		res = res.replace("\f", "/f");
+		res = res.replace("\\", "/");
+		System.out.println(res);
+		return res;
+	}
+	
     /**
      * @param args the command line arguments
      */
