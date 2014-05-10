@@ -57,8 +57,10 @@ public class Manager {
     { // suppose to run on the alghorithms and return a match
         Butterfly ans ;
         Vector <Integer> RGB = hsv.getRGB(imgPath);
-        System.out.println("rgb vector size: " + RGB.size());
-        ans = kNear.KNearestNeighborsDistance(RGB);
+        Vector <Float> HSV = hsv.getHSV(RGB);
+        float Vsum = kNear.vectorSum(HSV);
+        float Vavg = kNear.VectorAvg(HSV, Vsum);
+        ans = kNear.KNearestNeighborsAvgH(Vavg);
         return ans;
     }
     

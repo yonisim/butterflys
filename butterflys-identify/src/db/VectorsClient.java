@@ -36,8 +36,8 @@ public class VectorsClient extends MysqlClient {
 			bvector.vector_id = resultSet.getInt(1);
 			bvector.butterfly_id = resultSet.getInt(2);
 			bvector.linkToPicture = resultSet.getString(3);
-			bvector.vector_sum = resultSet.getInt(3);
-			bvector.vector_average = resultSet.getInt(4);
+                        bvector.vector_sum = resultSet.getFloat(4);
+			bvector.vector_average = resultSet.getFloat(5);
 			vectors.add(bvector);
 		}
 		return vectors;
