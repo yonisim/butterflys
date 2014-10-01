@@ -15,6 +15,8 @@ import algorithms.Manager;
 import java.awt.Toolkit;
 import java.sql.SQLException;
 import javax.swing.JOptionPane;
+
+import detectors.ButterflyIdentifier;
 import objects.Butterfly;
 
 /**
@@ -258,7 +260,21 @@ public class gui extends javax.swing.JFrame {
     private void btnSearchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSearchActionPerformed
         try{
         	System.out.println(_ImgPath);
-            Butterfly ans = _manager.Detector(_ImgPath);
+        	
+        	BufferedImage image = null;
+			try {
+				image = ImageIO.read(new File(_ImgPath));
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+
+        	ButterflyIdentifier bi = new ButterflyIdentifier();
+            BufferedImage filteredImage = bi.getFilteredImage(image);
+        	
+            // take the buffered image and insert to the algorithm
+            
+        	Butterfly ans = _manager.Detector(_ImgPath);
+            
             SearchResView showAns = new SearchResView();
             showAns.setButterflyAns(ans);
         }catch (ClassNotFoundException | SQLException | IOException e){

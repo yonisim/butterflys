@@ -84,6 +84,24 @@ public class K_nearest {
 		return result;
 	}
 
+        protected Butterfly KNearestNeighborsAvgH(float Vavg) throws ClassNotFoundException, SQLException, IOException
+        {
+            Butterfly result = new Butterfly();
+            float min = Float.MAX_VALUE;
+            float res;
+            VectorsClient vectorsClient = new VectorsClient();
+            for (BVector vector : vectorsClient.selectVectors("")){
+                res = Math.abs(vector.vector_average - Vavg);
+                if(res < min){
+				min = res;
+				List<Butterfly> results = butterflysClient.selectButterfly(butterflysClient.getColId() + " = " + vector.butterfly_id);
+				if(results.size() > 1)
+					System.out.println("ERROR: more than 1 butterfly matches the id " + vector.butterfly_id);
+				result = results.get(0);
+                }
+            }
+            return result;
+        }
 
 	protected long vectorSumRGB(Vector<Integer> vector){
 		long sum = 0;
@@ -103,7 +121,7 @@ public class K_nearest {
 	protected float vectorSum(Vector<Float> HSV)
 	{ // for now it's only the sum of h
 		float Hsum = 0;
-		for (int i = 0 ; i< HSV.size() - 3; i = i + 3)
+		for (int i = 0 ; i< HSV.size(); i = i + 3)
 		{
 			Hsum += HSV.elementAt((i));
 		}
