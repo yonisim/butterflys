@@ -13,8 +13,10 @@ public class VectorsClient extends MysqlClient {
 	private String colVectorId = "vector_id";
 	private String colbutterflyId = "butterfly_id";
 	private String colLinkToPicture = "link_to_picture";
-	private String colVectorSum = "vector_sum";
-	private String colVectorAverage = "vector_average";
+	private String colVectorMax = "vector_max";
+	private String colR_mean = "r_mean";
+	private String colG_mean = "g_mean";
+	private String colB_mean = "b_mean";
 	
 	
 	public int insertVector(BVector bvector) 
@@ -22,8 +24,10 @@ public class VectorsClient extends MysqlClient {
 		String setClause = colVectorId + " = " + bvector.vector_id + " , " +
 							colbutterflyId + " = " + bvector.butterfly_id + " , " +
 							colLinkToPicture + " = '" + bvector.linkToPicture + "' , " +
-							colVectorSum + " = " + bvector.vector_sum + " , " + 
-							colVectorAverage + " = " + bvector.vector_average;
+							colVectorMax + " = " + bvector.vector_max + " , " + 
+							colR_mean + " = " + bvector.r_mean + " , " +
+							colG_mean + " = " + bvector.g_mean + " , " +
+							colB_mean + " = " + bvector.b_mean;
 		return insert(TABLE_NAME , setClause);
 	}
 	
@@ -36,8 +40,10 @@ public class VectorsClient extends MysqlClient {
 			bvector.vector_id = resultSet.getInt(1);
 			bvector.butterfly_id = resultSet.getInt(2);
 			bvector.linkToPicture = resultSet.getString(3);
-                        bvector.vector_sum = resultSet.getFloat(4);
-			bvector.vector_average = resultSet.getFloat(5);
+            bvector.vector_max = resultSet.getInt(4);
+			bvector.r_mean = resultSet.getInt(5);
+			bvector.g_mean = resultSet.getInt(6);
+			bvector.b_mean = resultSet.getInt(7);
 			vectors.add(bvector);
 		}
 		return vectors;

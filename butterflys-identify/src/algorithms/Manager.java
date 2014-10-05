@@ -1,9 +1,13 @@
 package algorithms;
 
+import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Vector;
+
+import javax.imageio.ImageIO;
 
 import objects.BVector;
 import objects.Butterfly;
@@ -12,6 +16,7 @@ import objects.Pixel;
 import db.ButterflysClient;
 import db.PixelsClient;
 import db.VectorsClient;
+import detectors.ButterflyIdentifier;
 
 /**
  *
@@ -24,12 +29,7 @@ public class Manager {
     
     public void AddToDB(String imgPath, String name, String description) throws ClassNotFoundException, SQLException, IOException
     {
-        Vector <Integer> RGB = hsv.getRGB(imgPath);
-        System.out.println("rgb size: " + RGB.size());
-        Vector <Float> HSV = hsv.getHSV(RGB);
-        System.out.println("hsv size: " + HSV.size());
-        float Vsum = kNear.vectorSum(HSV);
-        float Vavg = kNear.VectorAvg(HSV, Vsum);
+
        
         ButterflysClient butterflysClient = new ButterflysClient();
         
@@ -42,8 +42,15 @@ public class Manager {
         	butterfly_id = butterflysClient.insertButterfly(butterfly);
         }
         
+        BufferedImage image = ImageIO.read(new File(imgPath));
+        
+        ButterflyIdentifier bi = new ButterflyIdentifier();
+        BufferedImage filteredImage = bi.getFilteredImage(image);
+        
+        int[] rgbMean = bi.getRGBMean(filteredImage);
+        
         System.out.println("inserted butterfly with id: "+ butterfly_id);
-        BVector bvector = new BVector(butterfly_id, imgPath , Vsum, Vavg);
+        BVector bvector = new BVector(butterfly_id, imgPath , rgbMean[1] , rgbMean[2] , rgbMean[3] , rgbMean[4]);
         addVectorToDb(bvector);
     }
     

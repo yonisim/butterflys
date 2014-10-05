@@ -47,6 +47,16 @@ public class SearchResView extends javax.swing.JFrame {
         }
     }
     
+    
+    public void setButterflyAns(BufferedImage image){
+   
+            BufferedImage UserImage = image;
+            javax.swing.ImageIcon icon = new javax.swing.ImageIcon(ScaleImage(UserImage,jLabelPicture.getHeight(),jLabelPicture.getWidth()));
+            jLabelPicture.setIcon(icon);
+            this.setVisible(true);
+
+    }
+    
     private Image ScaleImage(Image img , int H, int W){
         BufferedImage Scaledimg = new BufferedImage(W, H, BufferedImage.TYPE_INT_RGB);
         Graphics2D g = Scaledimg.createGraphics();

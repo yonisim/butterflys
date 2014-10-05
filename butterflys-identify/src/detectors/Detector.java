@@ -224,18 +224,6 @@ public abstract  class Detector {
 		return res;
 	}
 	
-	public int [] getRGBMean(BufferedImage image){
-		int[] areaSumRgb = new int[5];
-		for(int i = 0 ; i < image.getHeight() ; i++){
-			int[] lineMean = getLineRgb(image , 0 , image.getWidth() , i);
-			areaSumRgb = addArray(areaSumRgb, lineMean);
-		}
-
-		int[] mean = getMeansFromSum(areaSumRgb);
-
-		return mean;
-
-	}
 	
 	protected int[] getMeansFromSum(int[] sums){
 		if(sums[0] == 0)

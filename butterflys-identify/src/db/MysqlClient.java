@@ -40,7 +40,7 @@ public class MysqlClient {
 	private void initParams() throws IOException {
 		connectionUrl = "localhost:3306";
 		dbUserName = "root";
-		dbPassword = "";
+		dbPassword = "root";
 		dbDriverName = "com.mysql.jdbc.Driver";
 		SCHEMA = "butterflys";
 	}
@@ -99,7 +99,6 @@ public class MysqlClient {
 	public int insert(String insert)
 			throws SQLException, ClassNotFoundException, IOException {
 
-		try {
 			System.out.println("DB Connection URL=" + connectionUrl);
 			System.out.println("DB Username=      " + dbUserName);
 			System.out.println("DB Password=      " + dbPassword);
@@ -114,10 +113,6 @@ public class MysqlClient {
 				System.out.println("Inserted with index: " + result);
 			}
 			return result;
-		} catch (SQLException e){
-			System.out.println(e.getMessage());
-			return 0;
-		}
 	}
 
 	public void printFirstColFromResultSet() throws SQLException{

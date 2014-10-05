@@ -40,5 +40,19 @@ public class ButterflyIdentifier {
 			strongestImage = detector.strongestImage;
 		}
 	}
+	
+	public int [] getRGBMean(BufferedImage image){
+		int[] areaSumRgb = new int[5];
+		Detector detector = new RGBDetector();
+		for(int i = 0 ; i < image.getHeight() ; i++){
+			int[] lineMean = detector.getLineRgb(image , 0 , image.getWidth() , i);
+			areaSumRgb = detector.addArray(areaSumRgb, lineMean);
+		}
+
+		int[] mean = detector.getMeansFromSum(areaSumRgb);
+
+		return mean;
+
+	}
 
 }

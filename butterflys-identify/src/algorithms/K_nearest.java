@@ -50,7 +50,7 @@ public class K_nearest {
 		float res;
 		VectorsClient vectorsClient = new VectorsClient();
 		for (BVector vector : vectorsClient.selectVectors("")){
-			res = Math.abs(vector.vector_sum - originalSum);
+			res = Math.abs(vector.vector_max - originalSum);
 			if(res < min){
 				min = res;
 				List<Butterfly> results = butterflysClient.selectButterfly(butterflysClient.getColId() + " = " + vector.butterfly_id);
@@ -71,7 +71,7 @@ public class K_nearest {
 		float res;
 		VectorsClient vectorsClient = new VectorsClient();
 		for (BVector vector : vectorsClient.selectVectors("")){
-			res = vector.vector_average - originalAvg;
+			res = vector.r_mean - originalAvg;
 			if(res < min){
 				min = res;
 				List<Butterfly> results = butterflysClient.selectButterfly(butterflysClient.getColId() + " = " + vector.butterfly_id);
@@ -91,7 +91,7 @@ public class K_nearest {
             float res;
             VectorsClient vectorsClient = new VectorsClient();
             for (BVector vector : vectorsClient.selectVectors("")){
-                res = Math.abs(vector.vector_average - Vavg);
+                res = Math.abs(vector.r_mean - Vavg);
                 if(res < min){
 				min = res;
 				List<Butterfly> results = butterflysClient.selectButterfly(butterflysClient.getColId() + " = " + vector.butterfly_id);
