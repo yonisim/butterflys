@@ -17,6 +17,7 @@ import db.ButterflysClient;
 import db.PixelsClient;
 import db.VectorsClient;
 import detectors.ButterflyIdentifier;
+import detectors.RGBDetector;
 
 /**
  *
@@ -26,13 +27,13 @@ public class Manager {
     //private DBClinet DBObject = new DBClinet();
     private HSV hsv = new HSV();
     private K_nearest kNear = new K_nearest();
+    ButterflysClient butterflysClient = new ButterflysClient();
+    VectorsClient vectorsClient = new VectorsClient();
     
     public void AddToDB(String imgPath, String name, String description) throws ClassNotFoundException, SQLException, IOException
     {
 
        
-        ButterflysClient butterflysClient = new ButterflysClient();
-        
         Butterfly butterfly = new Butterfly(name, imgPath, description);
         int butterfly_id;
         List<Butterfly> butterflys = butterflysClient.selectButterfly(butterflysClient.getColName() + " = " + "'" + butterfly.name + "'");
@@ -55,7 +56,6 @@ public class Manager {
     }
     
     public void addVectorToDb(BVector bvector) throws ClassNotFoundException, SQLException, IOException{
-    	VectorsClient vectorsClient = new VectorsClient();
     	int vector_id = vectorsClient.insertVector(bvector);
         System.out.println("Inserted vector with id: " + vector_id);
     }
@@ -71,5 +71,30 @@ public class Manager {
         return ans;
     }
     
+    
+    public Butterfly getClosestImage(int[] rgbMeanData){
+		// get closest neighbour
+    	detectors.Detector detector = new RGBDetector();
+		try {
+			List<BVector> vectorList = vectorsClient.selectVectors("");
+			int distanceFromImage = 255*3;
+			BVector closest = null;
+			for(BVector vector : vectorList){
+				System.out.println(vector.toString());
+				int currentDistance = detector.calcDistanceMeansRGB(rgbMeanData, new int[]{1,1,vector.getR_mean() , vector.getG_mean() , vector.getB_mean()});
+				System.out.println("distance: " + currentDistance);
+
+				if(currentDistance < distanceFromImage){
+					distanceFromImage = currentDistance;
+					closest = vector;
+				}
+			}
+			return butterflysClient.selectSingleButterfly(butterflysClient.getColId() + " = " + closest.butterfly_id);
+		} catch (ClassNotFoundException | SQLException | IOException e) {
+			e.printStackTrace();
+			return null;
+		}
+
+	}
 
 }

@@ -164,7 +164,7 @@ public abstract  class Detector {
 		return res;
 	}
 
-	protected int calcDistanceMeansRGB(int[] source , int[] objective){
+	public int calcDistanceMeansRGB(int[] source , int[] objective){
 		int res = 0;
 		for(int i = 2 ; i < source.length && i < objective.length ; i++){
 			if(objective[1] == 0)

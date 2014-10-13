@@ -258,7 +258,7 @@ public class gui extends javax.swing.JFrame {
     }//GEN-LAST:event_btnBrowseActionPerformed
 
     private void btnSearchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSearchActionPerformed
-        try{
+        
         	System.out.println(_ImgPath);
         	
         	BufferedImage image = null;
@@ -273,14 +273,12 @@ public class gui extends javax.swing.JFrame {
         	
             // take the buffered image and insert to the algorithm
             
-        	Butterfly ans = _manager.Detector(_ImgPath);
+        	Butterfly ans = _manager.getClosestImage(bi.getRGBMean(filteredImage));
             
             SearchResView showAns = new SearchResView();
             showAns.setButterflyAns(filteredImage);
-        }catch (ClassNotFoundException | SQLException | IOException e){
-            e.printStackTrace();
-            // need to do: inform the user something went wrong
-        }
+            //showAns.setButterflyAns(ans);
+
         //SearchResView showAns = new SearchResView();
         //showAns.setButterflyAns(new Butterfly(_Name,"C:\\Users\\שלומית\\Documents\\butterfly_images\\1138682009428191446.jpg", _Description));
     }//GEN-LAST:event_btnSearchActionPerformed

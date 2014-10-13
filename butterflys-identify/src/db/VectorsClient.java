@@ -49,5 +49,70 @@ public class VectorsClient extends MysqlClient {
 		return vectors;
 		
 	}
+
+	public String getTABLE_NAME() {
+		return TABLE_NAME;
+	}
+
+	public void setTABLE_NAME(String tABLE_NAME) {
+		TABLE_NAME = tABLE_NAME;
+	}
+
+	public String getColVectorId() {
+		return colVectorId;
+	}
+
+	public void setColVectorId(String colVectorId) {
+		this.colVectorId = colVectorId;
+	}
+
+	public String getColbutterflyId() {
+		return colbutterflyId;
+	}
+
+	public void setColbutterflyId(String colbutterflyId) {
+		this.colbutterflyId = colbutterflyId;
+	}
+
+	public String getColLinkToPicture() {
+		return colLinkToPicture;
+	}
+
+	public void setColLinkToPicture(String colLinkToPicture) {
+		this.colLinkToPicture = colLinkToPicture;
+	}
+
+	public String getColVectorMax() {
+		return colVectorMax;
+	}
+
+	public void setColVectorMax(String colVectorMax) {
+		this.colVectorMax = colVectorMax;
+	}
+
+	public String getColR_mean() {
+		return colR_mean;
+	}
+
+	public void setColR_mean(String colR_mean) {
+		this.colR_mean = colR_mean;
+	}
+
+	public String getColG_mean() {
+		return colG_mean;
+	}
+
+	public void setColG_mean(String colG_mean) {
+		this.colG_mean = colG_mean;
+	}
+
+	public String getColB_mean() {
+		return colB_mean;
+	}
+
+	public void setColB_mean(String colB_mean) {
+		this.colB_mean = colB_mean;
+	}
+	
 	
 }
