@@ -1,22 +1,31 @@
 package gui;
 
 
+import algorithms.Manager;
+import db.ButterflysClient;
+import db.FavoritesClient;
+import db.VectorsClient;
+import detectors.ButterflyIdentifier;
 import java.awt.Graphics2D;
+import java.awt.HeadlessException;
 import java.awt.Image;
 import java.awt.RenderingHints;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
-import javax.swing.filechooser.FileNameExtensionFilter;
-import algorithms.Manager;
-import java.awt.Toolkit;
-import java.sql.SQLException;
+import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
-
-import detectors.ButterflyIdentifier;
+import javax.swing.Timer;
+import javax.swing.filechooser.FileNameExtensionFilter;
+import objects.BVector;
 import objects.Butterfly;
 
 /**
@@ -31,6 +40,15 @@ public class gui extends javax.swing.JFrame {
     private FileNameExtensionFilter _fileFilter;
     private Manager _manager = new Manager();
     private String _pass = "12345";
+    private boolean AdaboostClicked = false;
+    private Timer timer;
+    private int _dispalyFavoriteImageIndex = -1;
+    private ButterflysClient _butterflysClient = new ButterflysClient();
+    private VectorsClient _vectorsClient = new VectorsClient();
+    private List<Butterfly> favoritesButterflies = new ArrayList<Butterfly>();
+    private List<BVector> currFavoritesImages;
+    
+    public static List<Integer> favoritesIDList  =  null;
     /**
      * Creates new form gui
      */
@@ -40,8 +58,51 @@ public class gui extends javax.swing.JFrame {
         _fileFilter = new FileNameExtensionFilter("Images",Extensions);
         FChooser.setFileFilter(_fileFilter);
         resetGui();
-    }
+        initializeFavoritesLists();
+        ActionListener timerTick = new ActionListener(){
 
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    if (favoritesIDList.size() != favoritesButterflies.size()) {
+                        updatefavoritesLists();
+                    }
+                } catch (ClassNotFoundException | SQLException | IOException ex) {
+                    JOptionPane.showMessageDialog(null, "Could not update favorites list correctly", "falied to update favorites", JOptionPane.ERROR_MESSAGE);
+                }
+            }    
+        };
+        timer = new Timer(1000, timerTick);
+        timer.start();
+    }
+    
+    private void enableButtons(boolean state) {
+        btnBrowse.setEnabled(state);
+        btnSearch.setEnabled(state);
+        btnAddToDB.setEnabled(state);
+        btnCreateAdaboost.setEnabled(state);
+    }
+    
+    private void initializeFavoritesLists(){
+        try {
+            favoritesIDList = new FavoritesClient().selectFavorite("");
+            updatefavoritesLists();
+        } catch (ClassNotFoundException | SQLException | IOException ex) {
+            JOptionPane.showMessageDialog(null, "Could not load the favorites list correctly", "falied to load favorites", JOptionPane.ERROR_MESSAGE);
+        } 
+    }
+    
+    private void updatefavoritesLists() throws ClassNotFoundException, SQLException, IOException {
+        favoritesButterflies.clear();
+        ComboBoxFavorites.removeAllItems();
+
+        for (Integer id : favoritesIDList) {
+            Butterfly temp = _butterflysClient.selectSingleButterfly(_butterflysClient.getColId() + " = " + id);
+            favoritesButterflies.add(temp);
+            ComboBoxFavorites.addItem(temp.name);
+        }
+    }
+    
     private void resetGui()
     {
         btnSearch.setEnabled(false);
@@ -83,7 +144,16 @@ public class gui extends javax.swing.JFrame {
         jLabelDescription = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
         taDescription = new javax.swing.JTextArea();
+        btnCreateAdaboost = new javax.swing.JButton();
         jPanel2 = new javax.swing.JPanel();
+        jLabel2 = new javax.swing.JLabel();
+        jLabel3 = new javax.swing.JLabel();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        taDescription1 = new javax.swing.JTextArea();
+        ComboBoxFavorites = new javax.swing.JComboBox();
+        btnNext = new javax.swing.JButton();
+        btnPrev = new javax.swing.JButton();
+        jLabelPictureFavorites = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Butterfly");
@@ -141,6 +211,13 @@ public class gui extends javax.swing.JFrame {
         taDescription.setWrapStyleWord(true);
         jScrollPane1.setViewportView(taDescription);
 
+        btnCreateAdaboost.setText("Create Adaboost Weights");
+        btnCreateAdaboost.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCreateAdaboostActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -149,19 +226,22 @@ public class gui extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(btnSearch, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(btnAddToDB, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jPasswordField1, javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jTextFieldButterflyName, javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(btnPass, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 353, Short.MAX_VALUE)
+                    .addComponent(btnPass, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(btnAddDetails, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 353, Short.MAX_VALUE)
+                    .addComponent(btnAddDetails, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(btnBrowse, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel1Layout.createSequentialGroup()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addComponent(jLabelpassword, javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabelButterflyName, javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabelDescription, javax.swing.GroupLayout.Alignment.LEADING))
-                        .addGap(0, 0, Short.MAX_VALUE)))
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(btnAddToDB, javax.swing.GroupLayout.PREFERRED_SIZE, 177, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnCreateAdaboost, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 503, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
@@ -170,14 +250,15 @@ public class gui extends javax.swing.JFrame {
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(btnBrowse, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btnSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btnAddToDB, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(btnAddToDB, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(btnCreateAdaboost, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jLabelpassword)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -190,25 +271,101 @@ public class gui extends javax.swing.JFrame {
                         .addComponent(jTextFieldButterflyName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jLabelDescription)
-                        .addGap(1, 1, 1)
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 87, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jScrollPane1)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(btnAddDetails)
-                        .addGap(12, 12, 12)))
-                .addContainerGap())
+                        .addComponent(btnAddDetails))
+                    .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 420, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         jTabbedPane2.addTab("Butterfly Recognition", jPanel1);
+
+        jLabel2.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        jLabel2.setText("Butterfly Name:");
+
+        jLabel3.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        jLabel3.setText("Butterfly Description:");
+
+        taDescription1.setEditable(false);
+        taDescription1.setBackground(new java.awt.Color(240, 240, 240));
+        taDescription1.setColumns(20);
+        taDescription1.setFont(new java.awt.Font("Courier New", 0, 12)); // NOI18N
+        taDescription1.setLineWrap(true);
+        taDescription1.setRows(5);
+        taDescription1.setWrapStyleWord(true);
+        jScrollPane2.setViewportView(taDescription1);
+
+        ComboBoxFavorites.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        ComboBoxFavorites.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        ComboBoxFavorites.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                ComboBoxFavoritesActionPerformed(evt);
+            }
+        });
+
+        btnNext.setText("Next");
+        btnNext.setToolTipText("Next Image");
+        btnNext.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnNextActionPerformed(evt);
+            }
+        });
+
+        btnPrev.setText("Prev");
+        btnPrev.setToolTipText("Previous image");
+        btnPrev.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnPrevActionPerformed(evt);
+            }
+        });
+
+        jLabelPictureFavorites.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0), 2));
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 880, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabelPictureFavorites, javax.swing.GroupLayout.PREFERRED_SIZE, 533, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane2)
+                    .addComponent(ComboBoxFavorites, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addComponent(jLabel2)
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addComponent(jLabel3)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 50, Short.MAX_VALUE)
+                        .addComponent(btnPrev)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(btnNext)))
+                .addContainerGap())
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 420, Short.MAX_VALUE)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addComponent(jLabelPictureFavorites, javax.swing.GroupLayout.PREFERRED_SIZE, 420, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addComponent(jLabel2)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addGroup(jPanel2Layout.createSequentialGroup()
+                                .addComponent(ComboBoxFavorites, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(jLabel3))
+                            .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                .addComponent(btnNext)
+                                .addComponent(btnPrev)))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jScrollPane2)))
+                .addContainerGap())
         );
 
         jTabbedPane2.addTab("Favorites", jPanel2);
@@ -221,9 +378,7 @@ public class gui extends javax.swing.JFrame {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(jTabbedPane2)
-                .addContainerGap())
+            .addComponent(jTabbedPane2)
         );
 
         jTabbedPane2.getAccessibleContext().setAccessibleName("tabs");
@@ -241,7 +396,10 @@ public class gui extends javax.swing.JFrame {
     }
     
     private void btnBrowseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBrowseActionPerformed
-        FChooser.showOpenDialog(jLabel1);
+        if (FChooser .showOpenDialog(jLabel1) == JFileChooser.CANCEL_OPTION)
+        {
+            return;
+        }
         File file = FChooser.getSelectedFile();
         if (file.exists()) {
             _ImgPath = file.getAbsolutePath();
@@ -259,9 +417,9 @@ public class gui extends javax.swing.JFrame {
 
     private void btnSearchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSearchActionPerformed
         
-        	System.out.println(_ImgPath);
-        	
-        	BufferedImage image = null;
+        System.out.println(_ImgPath);
+        /////////////////////////////////////////////////////////
+       /* BufferedImage image = null;
 			try {
 				image = ImageIO.read(new File(_ImgPath));
 			} catch (IOException e) {
@@ -270,47 +428,63 @@ public class gui extends javax.swing.JFrame {
 
         	ButterflyIdentifier bi = new ButterflyIdentifier();
             BufferedImage filteredImage = bi.getFilteredImage(image);
-        	
-            // take the buffered image and insert to the algorithm
-            
-        	Butterfly ans = _manager.getClosestImage(bi.getRGBMean(filteredImage));
-            
             SearchResView showAns = new SearchResView();
-            showAns.setButterflyAns(filteredImage);
-            //showAns.setButterflyAns(ans);
+            showAns.setButterflyAns(filteredImage);*/
+        /////////////////////////////////////////////////////////
+        Butterfly ans;
+        try {
+            ans = _manager.getMatch(_ImgPath);
+            if (ans == null)
+            {
+                JOptionPane.showMessageDialog(null, "No matching Butterfly was found", "no match", JOptionPane.INFORMATION_MESSAGE);
+                return;
+            }
+            SearchResView showAns = new SearchResView();
 
-        //SearchResView showAns = new SearchResView();
-        //showAns.setButterflyAns(new Butterfly(_Name,"C:\\Users\\שלומית\\Documents\\butterfly_images\\1138682009428191446.jpg", _Description));
+            showAns.setButterflyAns(ans);
+        } catch (ClassNotFoundException | SQLException | IOException | InterruptedException | HeadlessException ex) {
+            JOptionPane.showMessageDialog(null, "An error as occured\n" + ex.getMessage(), "Error in search", JOptionPane.ERROR_MESSAGE);
+        }
     }//GEN-LAST:event_btnSearchActionPerformed
 
     private void btnAddToDBActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddToDBActionPerformed
         jLabelpassword.setVisible(true);
         jPasswordField1.setVisible(true);
         btnPass.setVisible(true);
-        btnBrowse.setEnabled(false);
-        btnSearch.setEnabled(false);
-        btnAddToDB.setEnabled(false);
+        enableButtons(false);
     }//GEN-LAST:event_btnAddToDBActionPerformed
 
     private void btnPassActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPassActionPerformed
         char[] userpass = jPasswordField1.getPassword();
         String Upass = "";
-        for (int i = 0; i < userpass.length; i++)
-        {
+        for (int i = 0; i < userpass.length; i++) {
             Upass = Upass + userpass[i];
         }
-        if (_pass.equalsIgnoreCase(Upass))
-        {
+        if (_pass.equalsIgnoreCase(Upass)) {
             jLabelpassword.setVisible(false);
             jPasswordField1.setVisible(false);
             btnPass.setVisible(false);
-            jLabelButterflyName.setVisible(true);
-            jTextFieldButterflyName.setVisible(true);
-            btnAddDetails.setVisible(true);
-            jLabelDescription.setVisible(true);
-            taDescription.setVisible(true);
-        }
+            if (AdaboostClicked == false) {
+                jLabelButterflyName.setVisible(true);
+                jTextFieldButterflyName.setVisible(true);
+                btnAddDetails.setVisible(true);
+                jLabelDescription.setVisible(true);
+                taDescription.setVisible(true);
+            } else {
+                AdaboostClicked = false;
+                try {
+                    System.out.println("start Creating Adaboost weights");
+                    _manager.createAdaboostWeights();
+                    JOptionPane.showMessageDialog(null, "Adaboost weights was created", "weights created", JOptionPane.INFORMATION_MESSAGE);
+                } catch (ClassNotFoundException | SQLException | IOException ex) {
+                    JOptionPane.showMessageDialog(null, "An error as occured while creating Adaboost weights\n" + ex.getMessage(), "Error while creating Adaboost weights", JOptionPane.ERROR_MESSAGE);
+                } finally {
+                    resetGui();
+                    enableButtons(true);
+                }
         
+            }
+        }
     }//GEN-LAST:event_btnPassActionPerformed
 
     private void btnAddDetailsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddDetailsActionPerformed
@@ -322,10 +496,6 @@ public class gui extends javax.swing.JFrame {
             {
                 _manager.AddToDB(_ImgPath, _Name,_Description);
                 JOptionPane.showMessageDialog(null, "Butterfly added to Data Base", "Add butterfly", JOptionPane.INFORMATION_MESSAGE);
-                resetGui();
-                btnBrowse.setEnabled(true);
-                btnSearch.setEnabled(true);
-                btnAddToDB.setEnabled(true);
             }
             else
             {
@@ -334,13 +504,68 @@ public class gui extends javax.swing.JFrame {
         }catch (ClassNotFoundException | SQLException | IOException e){
             e.printStackTrace();
             JOptionPane.showMessageDialog(null, "an error occured while adding the data \n Reason: \n " + e.getMessage(), "Add to data base failed", JOptionPane.ERROR_MESSAGE);
+        }finally{
             resetGui();
-            btnBrowse.setEnabled(true);
-            btnSearch.setEnabled(true);
-            btnAddToDB.setEnabled(true);
-        }       
+            enableButtons(true);
+        }
     }//GEN-LAST:event_btnAddDetailsActionPerformed
 
+    private void btnCreateAdaboostActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCreateAdaboostActionPerformed
+        jLabelpassword.setVisible(true);
+        jPasswordField1.setVisible(true);
+        btnPass.setVisible(true);
+        enableButtons(false);
+        AdaboostClicked = true;
+    }//GEN-LAST:event_btnCreateAdaboostActionPerformed
+
+    private void ComboBoxFavoritesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ComboBoxFavoritesActionPerformed
+        if (favoritesButterflies.isEmpty()){
+            return;
+        }
+        Butterfly temp = favoritesButterflies.get(ComboBoxFavorites.getSelectedIndex());
+        taDescription1.setText(temp.description);
+        try {
+            currFavoritesImages = _vectorsClient.selectVectors(_vectorsClient.getColbutterflyId() + " = " + temp.id);
+            loadImageOnFavorites(currFavoritesImages.get(0).getLinkToPicture());
+            _dispalyFavoriteImageIndex = 0;
+        } catch (ClassNotFoundException | SQLException | IOException ex) {
+            Logger.getLogger(gui.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_ComboBoxFavoritesActionPerformed
+
+    private void btnPrevActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPrevActionPerformed
+        if (_dispalyFavoriteImageIndex > 0)
+        {
+            _dispalyFavoriteImageIndex--;
+            try {
+                loadImageOnFavorites(currFavoritesImages.get(_dispalyFavoriteImageIndex).getLinkToPicture());
+            } catch (IOException ex) {
+                Logger.getLogger(gui.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }//GEN-LAST:event_btnPrevActionPerformed
+
+    private void btnNextActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNextActionPerformed
+        if (favoritesButterflies.isEmpty()){
+            return;
+        }
+        if (_dispalyFavoriteImageIndex < currFavoritesImages.size() - 1)
+        {
+            _dispalyFavoriteImageIndex++;
+            try {
+                loadImageOnFavorites(currFavoritesImages.get(_dispalyFavoriteImageIndex).getLinkToPicture());
+            } catch (IOException ex) {
+                Logger.getLogger(gui.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }//GEN-LAST:event_btnNextActionPerformed
+
+    private void loadImageOnFavorites(String imagePath) throws IOException{
+        BufferedImage UserImage = ImageIO.read(new File(imagePath));
+        javax.swing.ImageIcon icon = new javax.swing.ImageIcon(ScaleImage(UserImage,jLabelPictureFavorites.getHeight(),jLabelPictureFavorites.getWidth()));
+        jLabelPictureFavorites.setIcon(icon);
+    }
+    
 	public static String convertBackslashes(String s){
 		String res = s.replace("\t", "/t");
 		res = res.replace("\r", "/r");
@@ -387,23 +612,32 @@ public class gui extends javax.swing.JFrame {
         });
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JComboBox ComboBoxFavorites;
     private javax.swing.JFileChooser FChooser;
     private javax.swing.JButton btnAddDetails;
     private javax.swing.JButton btnAddToDB;
     private javax.swing.JButton btnBrowse;
+    private javax.swing.JButton btnCreateAdaboost;
+    private javax.swing.JButton btnNext;
     private javax.swing.JButton btnPass;
+    private javax.swing.JButton btnPrev;
     private javax.swing.JButton btnSearch;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabelButterflyName;
     private javax.swing.JLabel jLabelDescription;
+    private javax.swing.JLabel jLabelPictureFavorites;
     private javax.swing.JLabel jLabelpassword;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPasswordField jPasswordField1;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTabbedPane jTabbedPane2;
     private javax.swing.JTextField jTextFieldButterflyName;
     private javax.swing.JTextArea taDescription;
+    private javax.swing.JTextArea taDescription1;
     // End of variables declaration//GEN-END:variables
 
 }

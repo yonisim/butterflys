@@ -17,6 +17,12 @@ public class VectorsClient extends MysqlClient {
 	private String colR_mean = "r_mean";
 	private String colG_mean = "g_mean";
 	private String colB_mean = "b_mean";
+        private String colH_mean = "h_mean";
+	private String colS_mean = "s_mean";
+	private String colV_mean = "v_mean";
+        private String colH_max = "h_max";
+	private String colS_max = "s_max";
+	private String colV_max = "v_max";
 	
 	
 	public int insertVector(BVector bvector) 
@@ -27,7 +33,13 @@ public class VectorsClient extends MysqlClient {
 							colVectorMax + " = " + bvector.vector_max + " , " + 
 							colR_mean + " = " + bvector.r_mean + " , " +
 							colG_mean + " = " + bvector.g_mean + " , " +
-							colB_mean + " = " + bvector.b_mean;
+							colB_mean + " = " + bvector.b_mean + " , " +
+                                                        colH_mean + " = " + bvector.h_mean + " , " +
+							colS_mean + " = " + bvector.s_mean + " , " +
+							colV_mean + " = " + bvector.v_mean + " , " +
+                                                        colH_max + " = " + bvector.h_max + " , " +
+							colS_max + " = " + bvector.s_max + " , " +
+                                                        colV_max + " = " + bvector.v_max;
 		return insert(TABLE_NAME , setClause);
 	}
 	
@@ -40,10 +52,16 @@ public class VectorsClient extends MysqlClient {
 			bvector.vector_id = resultSet.getInt(1);
 			bvector.butterfly_id = resultSet.getInt(2);
 			bvector.linkToPicture = resultSet.getString(3);
-            bvector.vector_max = resultSet.getInt(4);
+                        bvector.vector_max = resultSet.getInt(4);
 			bvector.r_mean = resultSet.getInt(5);
 			bvector.g_mean = resultSet.getInt(6);
 			bvector.b_mean = resultSet.getInt(7);
+                        bvector.h_mean = resultSet.getFloat(8);
+                        bvector.s_mean = resultSet.getFloat(9);
+                        bvector.v_mean = resultSet.getFloat(10);
+                        bvector.h_max = resultSet.getFloat(11);
+                        bvector.s_max = resultSet.getFloat(12);
+                        bvector.v_max = resultSet.getFloat(13);
 			vectors.add(bvector);
 		}
 		return vectors;
@@ -114,5 +132,51 @@ public class VectorsClient extends MysqlClient {
 		this.colB_mean = colB_mean;
 	}
 	
-	
+	public String getColH_mean(){
+            return this.colH_mean;
+        }
+        
+        public void setColH_mean(String colH_mean){
+            this.colH_mean = colH_mean;
+        }
+        
+        public String getColS_mean(){
+            return this.colS_mean;
+        }
+        
+        public void setColS_mean(String colS_mean){
+            this.colS_mean = colS_mean;
+        }
+        
+        public String getcolV_mean(){
+            return this.colV_mean;
+        }
+        
+        public void setcolV_mean(String colV_mean){
+            this.colV_mean = colV_mean;
+        }
+        
+        public String getcolH_max(){
+            return this.colH_max;
+        }
+        
+        public void setcolH_max(String colH_max){
+            this.colH_max = colH_max;
+        }
+        
+        public String getcolS_max(){
+            return this.colS_max;
+        }
+        
+        public void setcolS_max(String colS_max){
+            this.colS_max = colS_max;
+        }
+        
+        public String getcolV_max(){
+            return this.colV_max;
+        }
+        
+        public void setcolV_max(String colV_max){
+            this.colV_max = colV_max;
+        }
 }

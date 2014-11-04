@@ -71,7 +71,20 @@ public class MysqlClient {
 		executeQuery(query);
 	}
 
+        public void selectNoWhere(String table, String clause)
+            throws ClassNotFoundException, SQLException, IOException {
 
+            String query = "SELECT * FROM " + SCHEMA + "." + table + " " + clause;
+            executeQuery(query);
+        }
+        
+        public void Delete (String table)throws ClassNotFoundException, SQLException, IOException{
+            String truncate = "TRUNCATE " + SCHEMA + "." + table;
+            connection = getConnection(connectionUrl, dbUserName, dbPassword);
+            statement = connection.createStatement();
+            statement.executeUpdate(truncate);
+        }
+        
 	public void executeQuery(String query)
 			throws ClassNotFoundException, IOException {
 

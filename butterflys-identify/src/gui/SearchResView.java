@@ -1,28 +1,26 @@
 package gui;
 
 
+import db.FavoritesClient;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
+import javax.swing.JOptionPane;
 import objects.Butterfly;
-
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 
 /**
  *
- * @author שלומית
+ * @author Shlomit Rozen(Gilboa) Haim Gilboa, Mayyan Simkins
  */
 public class SearchResView extends javax.swing.JFrame {
-
+    
     private Butterfly _ans;
     
     /**
@@ -81,6 +79,7 @@ public class SearchResView extends javax.swing.JFrame {
         taDescription = new javax.swing.JTextArea();
         jLabel3 = new javax.swing.JLabel();
         jLabelPicture = new javax.swing.JLabel();
+        btnAddToFavorites = new javax.swing.JButton();
 
         setTitle("Detected Butterfly");
         setBounds(new java.awt.Rectangle(200, 100, 0, 0));
@@ -106,6 +105,13 @@ public class SearchResView extends javax.swing.JFrame {
 
         jLabelPicture.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0), 2));
 
+        btnAddToFavorites.setText("Add to Favorites");
+        btnAddToFavorites.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnAddToFavoritesActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -114,32 +120,55 @@ public class SearchResView extends javax.swing.JFrame {
                 .addComponent(jLabelPicture, javax.swing.GroupLayout.PREFERRED_SIZE, 525, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(28, 28, 28)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane1)
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabelButterflyName)
-                            .addComponent(jLabel3)
                             .addComponent(jLabel2))
-                        .addGap(0, 154, Short.MAX_VALUE))
-                    .addComponent(jScrollPane1))
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jLabel3)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnAddToFavorites, javax.swing.GroupLayout.DEFAULT_SIZE, 170, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jLabelPicture, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabel2)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jLabelButterflyName)
-                .addGap(18, 18, 18)
-                .addComponent(jLabel3)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 127, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(250, Short.MAX_VALUE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jLabel2)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jLabelButterflyName)
+                        .addGap(18, 18, 18)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel3)
+                            .addComponent(btnAddToFavorites))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 360, Short.MAX_VALUE))
+                    .addComponent(jLabelPicture, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void btnAddToFavoritesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddToFavoritesActionPerformed
+        btnAddToFavorites.setEnabled(false);
+        if (gui.favoritesIDList.contains(_ans.id) == false){
+            gui.favoritesIDList.add(_ans.id);
+            JOptionPane.showMessageDialog(null, "Butterfly was added to favorites", "", JOptionPane.INFORMATION_MESSAGE);
+            try{
+            new FavoritesClient().insertFavorite(_ans.id);
+            }catch(ClassNotFoundException | SQLException | IOException ex){
+                JOptionPane.showMessageDialog(null, "failed to add the butterfly to favorites", "", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+        else{
+            JOptionPane.showMessageDialog(null, "Butterfly is already in the favorites", "", JOptionPane.INFORMATION_MESSAGE);
+        }
+    }//GEN-LAST:event_btnAddToFavoritesActionPerformed
 
     /**
      * @param args the command line arguments
@@ -176,6 +205,7 @@ public class SearchResView extends javax.swing.JFrame {
         });
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnAddToFavorites;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabelButterflyName;

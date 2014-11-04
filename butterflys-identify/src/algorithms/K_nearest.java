@@ -1,11 +1,7 @@
 package algorithms;
 
-import java.io.IOException;
-import java.sql.SQLException;
 import java.util.List;
 import java.util.Vector;
-
-import db.*;
 import objects.*;
 
 /**
@@ -14,131 +10,101 @@ import objects.*;
  */
 public class K_nearest {
 
-	private ButterflysClient butterflysClient = new ButterflysClient();
-
-	protected Butterfly KNearestNeighborsDistance(Vector <Integer> original) throws ClassNotFoundException, SQLException, IOException
-	{
-		Butterfly result = new Butterfly();
-		long min = Long.MAX_VALUE;
-		VectorsClient vectorsClient = new VectorsClient();
-		PixelsClient pixelsClient = new PixelsClient();
-		for (BVector vector : vectorsClient.selectVectors(""))
-		{
-			Vector <Integer> current = pixelsClient.getVectorFromDb(vector.vector_id);
-
-			long distance = vectorsDistance(current, original);
-
-			if (distance < min)
-			{
-				min = distance;
-				List<Butterfly> results = butterflysClient.selectButterfly(butterflysClient.getColId() + " = " + vector.butterfly_id);
-				if(results.size() > 1)
-					System.out.println("ERROR: more than 1 butterfly matches the id " + vector.butterfly_id);
-				result = results.get(0);
-			}
-		}
-		if(result.id == 0)
-			System.out.println("No match was found");
-		return result;
-	}
-
-	protected Butterfly KNearestNeighborsSum(Vector<Integer> original) throws ClassNotFoundException, SQLException, IOException
-	{
-		Butterfly result = new Butterfly();
-		float min = Float.MAX_VALUE;
-		float originalSum = vectorSumRGB(original);
-		float res;
-		VectorsClient vectorsClient = new VectorsClient();
-		for (BVector vector : vectorsClient.selectVectors("")){
-			res = Math.abs(vector.vector_max - originalSum);
-			if(res < min){
-				min = res;
-				List<Butterfly> results = butterflysClient.selectButterfly(butterflysClient.getColId() + " = " + vector.butterfly_id);
-				if(results.size() > 1)
-					System.out.println("ERROR: more than 1 butterfly matches the id " + vector.butterfly_id);
-				result = results.get(0);
-
-			}
-		}
-		return result;
-	}
-	
-	protected Butterfly KNearestNeighborsAvg(Vector<Integer> original) throws ClassNotFoundException, SQLException, IOException
-	{
-		Butterfly result = new Butterfly();
-		float min = Float.MAX_VALUE;
-		float originalAvg = VectorAvgRGB(original);
-		float res;
-		VectorsClient vectorsClient = new VectorsClient();
-		for (BVector vector : vectorsClient.selectVectors("")){
-			res = vector.r_mean - originalAvg;
-			if(res < min){
-				min = res;
-				List<Butterfly> results = butterflysClient.selectButterfly(butterflysClient.getColId() + " = " + vector.butterfly_id);
-				if(results.size() > 1)
-					System.out.println("ERROR: more than 1 butterfly matches the id " + vector.butterfly_id);
-				result = results.get(0);
-
-			}
-		}
-		return result;
-	}
-
-        protected Butterfly KNearestNeighborsAvgH(float Vavg) throws ClassNotFoundException, SQLException, IOException
-        {
-            Butterfly result = new Butterfly();
-            float min = Float.MAX_VALUE;
-            float res;
-            VectorsClient vectorsClient = new VectorsClient();
-            for (BVector vector : vectorsClient.selectVectors("")){
-                res = Math.abs(vector.r_mean - Vavg);
-                if(res < min){
-				min = res;
-				List<Butterfly> results = butterflysClient.selectButterfly(butterflysClient.getColId() + " = " + vector.butterfly_id);
-				if(results.size() > 1)
-					System.out.println("ERROR: more than 1 butterfly matches the id " + vector.butterfly_id);
-				result = results.get(0);
+    /**
+     * this is a generic K Nearest Neighbors function, that check the distance
+     *
+     * @param functionCompare the compare function
+     * @param newButterfly the butterfly vector we need to get a match for
+     * @param butterflyList a vector of butterfly to search Neighbors on
+     * @param maxDistance the max distance we will care about,
+     * "Double.MAX_VALUE" means don't limit
+     * @param maxNumOfNeighbors the number of Neighbors we will care about to
+     * decide (closest Neighbors), Integer.MAX_VALUE means dont limit
+     * @param avgDistance if true, calc the average distance for each butterfly
+     * type (closest Neighbors)
+     * @return the resualt Butterfly ID
+     */
+    protected int KNearestNeighborsGeneric(compareFunction functionCompare, BVector newButterfly, List<BVector> butterflyList, double maxDistance, int maxNumOfNeighbors, boolean avgDistance) {
+        try {
+            Vector<Helper> compareRes = new Vector<Helper>(); // copareRes will hold the distance for each neighbor
+            Vector<Integer> IDs = new Vector<Integer>(); // which butterflies ID's we have resualt for
+            Vector<Integer> IDsCount = new Vector<Integer>(); // this vector will match the IDs vector, counting how many times we got each butterfly ID
+            for (BVector vector : butterflyList) {
+                double res = functionCompare.compareVector(vector, newButterfly);
+                if (res <= maxDistance) {
+                    addHelperSorted(compareRes, new Helper(res, vector.butterfly_id));
+                    AddToIDsAndIDsCount(vector.butterfly_id, IDs, IDsCount);
+                    if (compareRes.size() > maxNumOfNeighbors) {
+                        removeFromIDsAndIDsCount(compareRes.lastElement().getButterflyID(), IDs, IDsCount);
+                        compareRes.removeElementAt(compareRes.size() - 1);
+                    }
                 }
             }
-            return result;
+            if (avgDistance == true) {
+                Vector<Helper> AvgDistanceRes = new Vector<Helper>();
+                for (int i = 0; i < IDs.size(); i++) {
+                    double sum = 0;
+                    for (Helper curDistance : compareRes) {
+                        if (curDistance.getButterflyID() == IDs.elementAt(i)) {
+                            sum = sum + curDistance.getDistance();
+                        }
+                    }
+                    addHelperSorted(AvgDistanceRes, new Helper(sum / IDsCount.elementAt(i), IDs.elementAt(i)));
+                }
+                if (AvgDistanceRes.isEmpty()) {
+                    return -1;
+                }
+                return AvgDistanceRes.firstElement().getButterflyID();
+            } else {
+                int maxIndex = -1;
+                int maxCount = -1;
+                for (int i = 0; i < IDsCount.size(); i++) {
+                    if (IDsCount.elementAt(i) > maxCount) {
+                        maxCount = IDsCount.elementAt(i);
+                        maxIndex = i;
+                    }
+                }
+                if (maxIndex == -1) {
+                    return -1;
+                }
+                return IDs.elementAt(maxIndex);
+            }
+        } catch (Exception ex) {
+            return -1;
         }
+    }
 
-	protected long vectorSumRGB(Vector<Integer> vector){
-		long sum = 0;
-		for (int i = 0 ; i< vector.size(); i = i++)
-		{
-			sum += vector.elementAt((i));
-		}
-		return sum;
-	}
+    private void addHelperSorted(Vector<Helper> compareRes, Helper res) {
+        boolean done = false;
+        for (int i = 0; i < compareRes.size(); i++) {
+            if (res.getDistance() < compareRes.elementAt(i).getDistance()) {
+                compareRes.insertElementAt(res, i);
+                done = true;
+                break;
+            }
+        }
+        if (done == false) {
+            compareRes.add(res);
+        }
+    }
 
-	protected float VectorAvgRGB(Vector<Integer> vector){
-		return vectorSumRGB(vector) / vector.size();
-	}
+    private void AddToIDsAndIDsCount(int butterfly_id, Vector<Integer> IDs, Vector<Integer> IDsCount) {
+        int index = IDs.indexOf(butterfly_id);
+        if (index != -1) {
+            IDsCount.set(index, IDsCount.elementAt(index) + 1);
+        } else {
+            IDs.add(butterfly_id);
+            IDsCount.add(1);
+        }
+    }
 
-	
-	
-	protected float vectorSum(Vector<Float> HSV)
-	{ // for now it's only the sum of h
-		float Hsum = 0;
-		for (int i = 0 ; i< HSV.size(); i = i + 3)
-		{
-			Hsum += HSV.elementAt((i));
-		}
-		return Hsum;
-	}
-
-	protected float VectorAvg(Vector<Float> HSV, float Hsum)
-	{// for now it's only the avg of h
-		return Hsum / (HSV.size()/3);
-	}
-
-	private long vectorsDistance(Vector<Integer> vector_1 , Vector<Integer> vector_2){
-		long res = 0;
-		for (int i = 0; i < vector_1.size(); i += 3)
-		{
-			res += Math.abs(vector_1.elementAt(i) - vector_2.elementAt(i));
-		}
-		return res;
-	}
+    private void removeFromIDsAndIDsCount(int butterfly_id, Vector<Integer> IDs, Vector<Integer> IDsCount) {
+        int index = IDs.indexOf(butterfly_id);
+        if (IDsCount.elementAt(index) == 1) {
+            IDsCount.removeElementAt(index);
+            IDs.removeElementAt(index);
+        } else {
+            IDsCount.set(index, IDsCount.elementAt(index) - 1);
+        }
+    }
 }
