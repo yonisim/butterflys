@@ -25,21 +25,16 @@ public class Manager {
 
 	Socket socket;
 	ConnectionHelper connectionHelper;
-	private ObjectInputStream ois;
-	private ObjectOutputStream oos;
-	private Properties properties;
 
 	public Manager() throws IOException {
-		//properties = new Properties();
-		//FileInputStream inputStream = new FileInputStream("src/resources/server.properties");
-		//properties.load(inputStream);
 		initConnection();
 	}
 
 	private void initConnection(){
 		try {
-			String ipAddress = "localhost";//"ec2-54-148-5-231.us-west-2.compute.amazonaws.com";//properties.getProperty("server.ip");
-			int port = 7776;//Integer.parseInt(properties.getProperty("server.port"));
+			//"localhost";//
+			String ipAddress = "ec2-54-148-5-231.us-west-2.compute.amazonaws.com";
+			int port = 7776;
 			socket = new Socket(ipAddress, port);
 			
 		} catch (IOException e) {
@@ -53,7 +48,7 @@ public class Manager {
 
 	public boolean AddToDB(BufferedImage image, String name, String description){
 		initConnection();
-		// TODO - send add to db request to server with image
+		// send add to db request to server with image
 		
 		ImageSerializable IS = ImageTransformer.bufferedImageToIS(image);
 		IS.messageType = MessageType.ADD_TO_DB;

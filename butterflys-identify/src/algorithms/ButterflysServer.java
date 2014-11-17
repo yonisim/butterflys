@@ -59,8 +59,8 @@ public class ButterflysServer  extends Thread{
 		if(o instanceof ImageSerializable){
 
 			BufferedImage bufferedImage = ImageTransformer.ISToBufferedImage((ImageSerializable)o);
-			File imgFile = new File("C:/Users/simkiy/Documents/temp/butterfls/resources/not_in_db/tempImage.jpg");
-			//File imgFile = new File("/home/ec2-user/images/tempImage.jpg");
+			//File imgFile = new File("C:/Users/simkiy/Documents/temp/butterfls/resources/not_in_db/tempImage.jpg");
+			File imgFile = new File("/home/ec2-user/images/tempImage.jpg");
 			
 			BufferedImage imageAns = null;
 			try {
