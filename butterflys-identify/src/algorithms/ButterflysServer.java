@@ -21,8 +21,8 @@ public class ButterflysServer  extends Thread{
 	private ConnectionHelper connectionHelper;
 	private Manager manager;
 
-	public ButterflysServer(ConnectionHelper player) {
-		this.connectionHelper = player;
+	public ButterflysServer(ConnectionHelper connectionHelper) {
+		this.connectionHelper = connectionHelper;
 		this.manager = new Manager();
 	}
 
@@ -38,9 +38,9 @@ public class ButterflysServer  extends Thread{
 				System.out.println("Server is listening on port: " + serverSocket.getLocalPort());
 
 				Socket socket = serverSocket.accept();
-				ConnectionHelper player = new ConnectionHelper(socket);	
+				ConnectionHelper connectionHelper = new ConnectionHelper(socket);	
 
-				ButterflysServer t = new ButterflysServer(player);
+				ButterflysServer t = new ButterflysServer(connectionHelper);
 				t.start();
 			}
 

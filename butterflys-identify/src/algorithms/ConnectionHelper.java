@@ -15,11 +15,11 @@ public class ConnectionHelper
         try
         {
             this.socket = socket;
-            System.out.println("creating new player instance");
+            System.out.println("creating new connection instance");
             setOos(new ObjectOutputStream(socket.getOutputStream()));
             oos.flush();
             setOis(new ObjectInputStream(socket.getInputStream()));
-            System.out.println("Player instance created");
+            System.out.println("connection instance created");
         }
         catch(IOException e)
         {
