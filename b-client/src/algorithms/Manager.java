@@ -24,6 +24,7 @@ import java.util.Properties;
 public class Manager {
 
 	Socket socket;
+	ConnectionHelper connectionHelper;
 	private ObjectInputStream ois;
 	private ObjectOutputStream oos;
 	private Properties properties;
@@ -45,17 +46,8 @@ public class Manager {
 			e.printStackTrace();
 		}
 		if(socket != null){
-			try {
-				System.out.println("creating new player instance");
-				setOos(new ObjectOutputStream(socket.getOutputStream()));
-				oos.flush();
-
-				setOis(new ObjectInputStream(socket.getInputStream()));
-
-				System.out.println("Player instance created");
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+			connectionHelper = new ConnectionHelper(socket);
+			
 		}
 	}
 
@@ -68,8 +60,8 @@ public class Manager {
 		IS.butterflyName = name;
 		IS.butterflyDescription = description;
 		
-		sendMessage(IS);
-		Object o = readMessage();
+		connectionHelper.sendMessage(IS);
+		Object o = connectionHelper.readMessage();
 		if(o instanceof OkMessage){
 			return true;
 		}
@@ -82,8 +74,8 @@ public class Manager {
 		initConnection();
 		ImageSerializable IS = ImageTransformer.bufferedImageToIS(image);
 		IS.messageType = MessageType.SEARCH;
-		sendMessage(IS);
-		Object o = readMessage();
+		connectionHelper.sendMessage(IS);
+		Object o = connectionHelper.readMessage();
 		if(o instanceof ImageSerializable){
 			return (ImageSerializable)o;
 		}
@@ -91,63 +83,6 @@ public class Manager {
 	}
 
 
-	public Object readMessage(){
-		try {
-			System.out.println("Reading message");
-			return ois.readObject();
-		} catch (ClassNotFoundException | IOException e) {
-			e.printStackTrace();
-			return null;
-		}
-	}
 
-	public void sendMessage(Object o){
-		try {
-			System.out.println("Sending message");
-			oos.writeObject(o);
-			System.out.println("Message sent");
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-
-
-	public void sendOkMessage(){
-		System.out.println("Sending OK message");
-		//sendMessage(OK_MESSAGE);
-
-	}
-
-
-	public void close(){
-		try {
-			ois.close();
-			oos.close();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-
-	public void flush(){
-		try {
-			oos.flush();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-
-	public ObjectInputStream getOis() {
-		return ois;
-	}
-	public void setOis(ObjectInputStream ois) {
-		this.ois = ois;
-	}
-	public ObjectOutputStream getOos() {
-		return oos;
-	}
-	public void setOos(ObjectOutputStream oos) {
-		this.oos = oos;
-	}
 
 }
