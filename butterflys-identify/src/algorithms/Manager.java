@@ -27,10 +27,9 @@ public class Manager {
     private VectorsClient vectorsClient = new VectorsClient();
     private AlgoWeightsClient algoWeightsClient = new AlgoWeightsClient();
     
-    public void AddToDB(String imgPath, String name, String description) throws ClassNotFoundException, SQLException, IOException
+    public void addToDB(String imgPath, String name, String description) throws ClassNotFoundException, SQLException, IOException
     {
-
-       
+    	imgPath = convertBackslashes(imgPath);
         Butterfly butterfly = new Butterfly(name, imgPath, description);
         int butterfly_id;
         List<Butterfly> butterflys = butterflysClient.selectButterfly(butterflysClient.getColName() + " = " + "'" + butterfly.name + "'");
@@ -561,4 +560,15 @@ public class Manager {
             return Math.sqrt(Math.pow(h, 2) + Math.pow(s, 2) + Math.pow(v, 2));
         }  
     }
+    
+	public static String convertBackslashes(String s){
+		String res = s.replace("\t", "/t");
+		res = res.replace("\r", "/r");
+		res = res.replace("\n", "/n");
+		res = res.replace("\b", "/b");
+		res = res.replace("\f", "/f");
+		res = res.replace("\\", "/");
+		System.out.println(res);
+		return res;
+	}
 }

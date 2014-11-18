@@ -33,7 +33,7 @@ public class Manager {
 	private void initConnection(){
 		try {
 			//"localhost";//
-			String ipAddress = "ec2-54-148-5-231.us-west-2.compute.amazonaws.com";
+			String ipAddress = "localhost";//"ec2-54-148-5-231.us-west-2.compute.amazonaws.com";
 			int port = 7776;
 			socket = new Socket(ipAddress, port);
 			

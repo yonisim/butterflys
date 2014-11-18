@@ -20,6 +20,9 @@ public class ButterflysServer  extends Thread{
 	private static final int port = 7776;
 	private ConnectionHelper connectionHelper;
 	private Manager manager;
+	///home/ec2-user/images/
+	//C:/Users/simkiy/Documents/temp/butterfls/resources/in_db/
+	private final String pathToImagesDir = "/home/ec2-user/images/";
 
 	public ButterflysServer(ConnectionHelper connectionHelper) {
 		this.connectionHelper = connectionHelper;
@@ -59,11 +62,12 @@ public class ButterflysServer  extends Thread{
 		if(o instanceof ImageSerializable){
 
 			BufferedImage bufferedImage = ImageTransformer.ISToBufferedImage((ImageSerializable)o);
-			//File imgFile = new File("C:/Users/simkiy/Documents/temp/butterfls/resources/not_in_db/tempImage.jpg");
-			File imgFile = new File("/home/ec2-user/images/tempImage.jpg");
+			File imgFile = new File(pathToImagesDir + "tempImage.jpg");
+			
 			
 			BufferedImage imageAns = null;
 			try {
+				System.out.println("Creating file at location: " + imgFile.getCanonicalPath());
 				imgFile.createNewFile();
 				ImageIO.write(bufferedImage, "jpg" , imgFile);
 				
@@ -89,14 +93,14 @@ public class ButterflysServer  extends Thread{
 				else if(((ImageSerializable)o).messageType == MessageType.ADD_TO_DB){
 					imgFile.delete();
 					String fileName = ((ImageSerializable)o).butterflyName.replaceAll(" ", "_");
-					String pathToFile = "/home/ec2-user/images/" + fileName +  ".jpg";
+					String pathToFile = pathToImagesDir + fileName +  ".jpg";
 					File newImgFile = new File(pathToFile);
 					while(newImgFile.exists())
 						newImgFile = new File(newImgFile.getCanonicalPath().replace(".jpg", "_1.jpg"));
 					newImgFile.createNewFile();
 					ImageIO.write(bufferedImage, "jpg", newImgFile);
 					
-					manager.AddToDB(newImgFile.getCanonicalPath() , ((ImageSerializable)o).butterflyName , ((ImageSerializable)o).butterflyDescription);
+					manager.addToDB(newImgFile.getCanonicalPath() , ((ImageSerializable)o).butterflyName , ((ImageSerializable)o).butterflyDescription);
 					connectionHelper.sendMessage(new OkMessage());
 				}
 			} catch (ClassNotFoundException | SQLException | IOException | NullPointerException

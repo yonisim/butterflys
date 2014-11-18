@@ -38,10 +38,16 @@ public class MysqlClient {
 	}
 
 	private void initParams() throws IOException {
+		//butterflysdb.ceqeio0wlwax.us-west-2.rds.amazonaws.com:3306
+		//localhost:3306
 		connectionUrl = "butterflysdb.ceqeio0wlwax.us-west-2.rds.amazonaws.com:3306";
 		dbUserName = "root";
+		//butterflys
+		//root
 		dbPassword = "butterflys";
 		dbDriverName = "com.mysql.jdbc.Driver";
+		//db
+		//butterflys
 		SCHEMA = "db";
 	}
 
