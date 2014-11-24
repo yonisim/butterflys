@@ -1,4 +1,4 @@
-package algorithms;
+package net;
 
 import java.io.Serializable;
 
