@@ -1,0 +1,97 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context="com.example.sandboxapp.MainActivity" >
+
+    <Button
+        android:id="@+id/button1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="browseGallery"
+        android:text="browse" />
+
+    <Button
+        android:id="@+id/button2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toEndOf="@+id/button1"
+        android:onClick="takeAPicture"
+        android:text="take a picture" />
+
+    <ImageView
+        android:id="@+id/imageView1"
+        android:layout_width="fill_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/button2"
+        android:contentDescription="select image for identification"
+        android:src="@drawable/ic_launcher" />
+
+    <Button
+        android:id="@+id/button3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/imageView1"
+        android:layout_alignStart="@+id/button1"
+        android:layout_marginStart="24dp"
+        android:enabled="false"
+        android:onClick="search"
+        android:text="search" />
+
+    <Button
+        android:id="@+id/button4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/button3"
+        android:layout_alignBottom="@+id/button3"
+        android:layout_marginStart="17dp"
+        android:layout_toEndOf="@+id/button3"
+        android:enabled="false"
+        android:onClick="addToDb"
+        android:text="Add To DB" />
+
+    <AutoCompleteTextView
+        android:id="@+id/autoCompleteTextView1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignRight="@+id/button4"
+        android:layout_alignTop="@+id/imageView1"
+        android:layout_marginTop="16dp"
+        android:contentDescription="butterfly name"
+        android:ems="10"
+        android:visibility="invisible"
+        android:hint="butterfly name"
+        android:inputType="textAutoComplete" >
+
+        <requestFocus />
+    </AutoCompleteTextView>
+
+    <AutoCompleteTextView
+        android:id="@+id/autoCompleteTextView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/autoCompleteTextView1"
+        android:layout_below="@+id/autoCompleteTextView1"
+        android:layout_marginTop="16dp"
+        android:ems="10"
+        android:visibility="invisible"
+        android:hint="butterfly description"
+        android:inputType="textImeMultiLine" />
+
+    <Button
+        android:id="@+id/button5"
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/autoCompleteTextView2"
+        android:layout_alignParentRight="true"
+        android:enabled="false"
+        android:visibility="invisible"
+        android:onClick="addToDbExecute"
+        android:text="Add" />
+
+</RelativeLayout>
